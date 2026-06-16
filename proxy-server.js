@@ -22,6 +22,9 @@ if (proxies.length === 0) {
 
 console.log(`Loaded ${proxies.length} proxies from ${listPath}.`);
 
+const randomProxy = proxies[Math.floor(Math.random() * proxies.length)];
+console.log(`\n[PROXY] Selected upstream proxy for this session: ${randomProxy}`);
+
 const server = new ProxyChain.Server({
     // Port where the local proxy server will listen
     port: 18080,
@@ -31,10 +34,6 @@ const server = new ProxyChain.Server({
 
     // This function is called for every incoming request to prepare the upstream proxy
     prepareRequestFunction: ({ request, username, password, hostname, port, isHttp, connectionId }) => {
-        // Select a random proxy from the list
-        const randomProxy = proxies[Math.floor(Math.random() * proxies.length)];
-        console.log(`[PROXY] Routing request to ${hostname}:${port} via ${randomProxy}`);
-        
         return {
             requestAuthentication: false,
             upstreamProxyUrl: randomProxy,
@@ -43,10 +42,10 @@ const server = new ProxyChain.Server({
 });
 
 server.listen(() => {
-    console.log(`\n========================================`);
+    console.log(`========================================`);
     console.log(`Local Forward Proxy Server is running!`);
     console.log(`Point your browser or tools to: http://127.0.0.1:18080`);
-    console.log(`Traffic will be routed randomly through ${proxies.length} downloaded proxies.`);
+    console.log(`All traffic is currently routed through: ${randomProxy}`);
     console.log(`========================================\n`);
 });
 
